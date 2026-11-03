@@ -1,7 +1,9 @@
 <?php
 include "../../dbconnect.php";
 
-$query = "SELECT * FROM viewvendor";
+$query = "SELECT * FROM viewvendor
+          WHERE STATUS = 'Aktif'
+          ORDER BY ID";
 ?>
 
 <!DOCTYPE html>

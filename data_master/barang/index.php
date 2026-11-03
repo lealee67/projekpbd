@@ -1,7 +1,9 @@
 <?php
 include "../../dbconnect.php";
 
-$query = "SELECT * FROM viewbarang";
+$query = "SELECT * FROM viewbarang
+          WHERE status = 'Aktif'
+          ORDER BY ID ASC"; 
 ?>
 
 <!DOCTYPE html>
@@ -13,6 +15,9 @@ $query = "SELECT * FROM viewbarang";
 
 <body>
     <h1>Data Barang Toko Kocak Gaming</h1>
+    <a href="tambah_barang.php" class="button">Tambah Barang</a>
+    <br><br>
+
     <table>
         <tr>
             <?php
@@ -21,6 +26,7 @@ $query = "SELECT * FROM viewbarang";
             foreach ($field as $kolom) {
                 echo "<th>" . $kolom->name . "</th>";
             }
+            echo "<th>Aksi</th>";
             ?>
         </tr>
 
@@ -31,6 +37,11 @@ $query = "SELECT * FROM viewbarang";
             foreach ($data as $nilai) {
                 echo "<td>" . $nilai . "</td>";
             }
+            echo"<td>";
+            echo "<a href='edit_barang.php?idbarang=" . $data['ID'] . "' class='button'>Edit</a>";
+            echo "<a href='hapus_barang.php?idbarang=" . $data['ID'] . "' class='button'    
+                onclick=\"return confirm('Apakah Anda yakin ingin menghapus barang ini?')\">Hapus</a>";
+            echo "</td>";
             echo "</tr>";
         }
         ?>

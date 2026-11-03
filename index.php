@@ -6,6 +6,8 @@
 </head>
 
 <body>
+
     <h1>Selamat Datang di Toko Kocak Gaming!</h1>
+
 </body>
 </html>

@@ -1,7 +1,9 @@
 <?php
 include "../../dbconnect.php";
 
-$query = "SELECT * FROM viewuser";
+$query = "SELECT * FROM viewuser
+          WHERE ROLE IS NOT NULL 
+          ORDER BY ID";
 ?>
 
 <!DOCTYPE html>

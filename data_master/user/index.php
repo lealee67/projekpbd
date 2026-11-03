@@ -1,5 +1,6 @@
 <?php
 include "../../dbconnect.php";
+include "../../navbar.php";
 
 $query = "SELECT * FROM viewuser
           WHERE ROLE IS NOT NULL 

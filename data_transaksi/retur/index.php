@@ -1,7 +1,8 @@
 <?php
 include "../../dbconnect.php";
+include "../../navbar.php";
 
-$query = "SELECT * FROM viewpretur";
+$query = "SELECT * FROM viewretur";
 ?>
 
 <!DOCTYPE html>

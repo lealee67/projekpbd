@@ -74,3 +74,77 @@ form button {
 td:last-child {
     white-space: nowrap;
 }
+
+nav.navbar {
+    display: flex;
+    align-items: center;
+    background-color: #222;
+    padding: 15px 30px;
+    width: calc(100% + 80px);
+    margin: -40px -40px 40px -40px;
+    box-sizing: border-box;
+    overflow: visible;
+}
+
+nav.navbar .navbar-brand {
+    color: white !important;
+    font-size: 20px;
+    font-weight: 700;
+    margin-right: 30px;
+    white-space: nowrap;
+    flex-shrink: 0;
+}
+
+nav.navbar .navbar-menu {
+    display: flex;
+    align-items: center;
+    flex-wrap: nowrap !important;
+    white-space: nowrap;
+    width: max-content;
+    flex-shrink: 0;
+    gap: 5px;
+}
+
+nav.navbar .navbar-menu > a {
+    color: white !important;
+    text-decoration: none !important;
+    padding: 10px 12px;
+    font-size: 14px;
+    white-space: nowrap;
+    flex-shrink: 0;
+}
+
+.transaksi-dropdown {
+    position: relative;
+}
+
+.transaksi-dropdown > a {
+    color: white !important;
+    text-decoration: none !important;
+}
+
+.transaksi-menu {
+    display: none;
+    position: absolute;
+    top: 100%;
+    left: 0;
+    background-color: #222;
+    min-width: 170px;
+    z-index: 9999;
+}
+
+.transaksi-menu a {
+    display: block;
+    color: white !important;
+    text-decoration: none !important;
+    padding: 10px 15px;
+    white-space: nowrap;
+}
+
+.transaksi-menu a:hover {
+    background-color: #444;
+}
+
+.transaksi-dropdown:hover .transaksi-menu {
+    display: block;
+}

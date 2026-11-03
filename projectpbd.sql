@@ -647,7 +647,7 @@ BEGIN
     DELIMITER ;
 
     -- Membuat view data transaksi
-    CREATE VIEW viewpengadaan AS
+CREATE VIEW viewpengadaan AS
 SELECT p.idpengadaan AS ID, 
 		  CASE p.status
           WHEN 'P' THEN 'Diproses'
@@ -663,7 +663,6 @@ JOIN vendor v
 ON p.vendor_idvendor = v.idvendor
 JOIN user u
 ON p.user_iduser = u.iduser;
-SELECT * FROM viewpengadaan;
 
 CREATE VIEW viewdetail_pengadaan AS
 SELECT dp.iddetail_pengadaan AS 'ID DETAIL', 
@@ -677,7 +676,7 @@ JOIN barang b
 ON dp.idbarang = b.idbarang
 JOIN pengadaan p
 ON dp.idpengadaan = p.idpengadaan;
-SELECT * FROM viewdetail_pengadaan;
+
 
 CREATE VIEW viewpenerimaan AS
 SELECT pr.idpenerimaan AS ID,
@@ -691,7 +690,7 @@ JOIN pengadaan p
 ON pr.idpengadaan = p.idpengadaan
 JOIN user u
 ON pr.iduser = u.iduser;
-SELECT * FROM viewpenerimaan;
+
 
 CREATE VIEW viewdetail_penerimaan AS
 SELECT dpr.iddetail_penerimaan AS ID,
@@ -705,7 +704,6 @@ JOIN penerimaan pr
 ON dpr.idpenerimaan = pr.idpenerimaan
 JOIN barang b
 ON dpr.barang_idbarang = b.idbarang;
-SELECT * FROM viewdetail_penerimaan;
 
 CREATE VIEW viewpenjualan AS
 SELECT j.idpenjualan AS ID,
@@ -716,7 +714,6 @@ SELECT j.idpenjualan AS ID,
 FROM penjualan j
 JOIN user u
 ON j.iduser = u.iduser;
-SELECT * FROM viewpenjualan;
 
 CREATE VIEW viewdetail_penjualan AS
 SELECT dj.iddetail_penjualan AS ID,
@@ -730,7 +727,6 @@ JOIN penjualan j
 ON dj.penjualan_idpenjualan = j.idpenjualan
 JOIN barang b
 ON dj.idbarang = b.idbarang;
-SELECT * FROM viewdetail_penjualan;
 
 CREATE VIEW viewretur AS
 SELECT r.idretur AS ID,
@@ -741,7 +737,6 @@ JOIN penerimaan pr
 ON r.idpenerimaan = pr.idpenerimaan
 JOIN user u
 ON r.iduser = u.iduser;
-select * from viewretur;
 
 CREATE VIEW viewdetail_retur AS
 SELECT dr.iddetail_retur AS ID,
@@ -756,7 +751,6 @@ JOIN detail_penerimaan dpr
 ON dr.iddetail_penerimaan = dpr.iddetail_penerimaan
 JOIN barang b
 ON dpr.barang_idbarang = b.idbarang;
-SELECT * FROM viewdetail_retur;
 
 CREATE VIEW viewkartu_stok AS
 SELECT ks.idkartu_stok AS ID,
@@ -773,7 +767,6 @@ SELECT ks.idkartu_stok AS ID,
 FROM kartu_stok ks
 JOIN barang b
 ON ks.idbarang = b.idbarang;
-SELECT * FROM viewkartu_stok;
 
 -- Membuat trigger
 DELIMITER //

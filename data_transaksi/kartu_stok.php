@@ -1,5 +1,6 @@
 <?php
 include "../dbconnect.php";
+include "../navbar.php";
 
 $query = "SELECT * FROM viewkartu_stok";
 ?>
@@ -8,7 +9,7 @@ $query = "SELECT * FROM viewkartu_stok";
 <html>
 <head>
     <title>Data Stok</title>
-    <link rel="stylesheet" href="../../css/style.css">
+    <link rel="stylesheet" href="../css/style.css">
 </head> 
 
 <body>

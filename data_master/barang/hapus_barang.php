@@ -1,5 +1,8 @@
 <?php
+require_once '../../auth.php';
+require_role([1]);
 include "../../dbconnect.php";
+global $conn;
 
 $idbarang = $_GET['idbarang'];
 $query = "UPDATE barang

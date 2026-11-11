@@ -1,5 +1,6 @@
 <?php
 include "../../dbconnect.php";
+global $conn;
 
 $query = "SELECT * FROM viewdetail_retur";
 ?>

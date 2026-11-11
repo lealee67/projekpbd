@@ -1,6 +1,7 @@
 <?php
 include "../../dbconnect.php";
 include "../../navbar.php";
+global $conn;
 
 $query = "SELECT * FROM viewsatuanbarang
           WHERE STATUS = 'Aktif'
@@ -16,6 +17,10 @@ $query = "SELECT * FROM viewsatuanbarang
 
 <body>
     <h1>Data Satuan Toko Kocak Gaming</h1>
+    <a href="tambah_satuan.php"
+    class="button">Tambah Satuan</a>
+    <br></br>
+
     <table>
         <tr>
             <?php
@@ -24,6 +29,7 @@ $query = "SELECT * FROM viewsatuanbarang
             foreach ($field as $kolom) {
                 echo "<th>" . $kolom->name . "</th>";
             }
+            echo "<th>Aksi</th>"
             ?>
         </tr>
 
@@ -34,6 +40,11 @@ $query = "SELECT * FROM viewsatuanbarang
             foreach ($data as $nilai) {
                 echo "<td>" . $nilai . "</td>";
             }
+            echo"<td>";
+            echo "<a href='edit_satuan.php?idsatuan=" . $data['ID'] . "'class='button'>Edit</a>";
+            echo "<a href='hapus_satuan.php?idsatuan=" . $data['ID'] . "' class='button'    
+                onclick=\"return confirm('Apakah Anda yakin ingin menghapus satuan ini?')\">Hapus</a>";
+            echo "</td>";
             echo "</tr>";
         }
         ?>

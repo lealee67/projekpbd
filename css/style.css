@@ -109,7 +109,7 @@ nav.navbar .navbar-menu > a {
     color: white !important;
     text-decoration: none !important;
     padding: 10px 12px;
-    font-size: 14px;
+    font-size: 18px;
     white-space: nowrap;
     flex-shrink: 0;
 }
@@ -121,6 +121,7 @@ nav.navbar .navbar-menu > a {
 .transaksi-dropdown > a {
     color: white !important;
     text-decoration: none !important;
+    font-size: 18px;
 }
 
 .transaksi-menu {
@@ -147,4 +148,389 @@ nav.navbar .navbar-menu > a {
 
 .transaksi-dropdown:hover .transaksi-menu {
     display: block;
+}
+
+
+
+/* ===== LOGIN PAGE - LIGHT THEME ===== */
+
+.login-page {
+    min-height: 100vh;
+    margin: 0;
+    padding: 20px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background: #F1F5F9;
+    font-family: 'Poppins', sans-serif;
+}
+
+/* Login Card */
+.login-card {
+    width: 540px;
+    max-width: 100%;
+    padding: 55px 60px;
+    background: #FFFFFF;
+    border: 1px solid #c3cad2;
+    border-radius: 16px;
+    box-sizing: border-box;
+    box-shadow: 0 8px 25px rgba(15, 23, 42, 0.08);
+}
+
+/* Header */
+.login-header {
+    text-align: center;
+    margin-bottom: 30px;
+}
+
+.login-header h1 {
+    color: #1E293B;
+    font-size: 32px;
+    font-weight: 700;
+    margin-bottom: 8px;
+}
+
+.login-header p {
+    color: #64748B;
+    font-size: 15px;
+    margin-bottom: 35px;
+}
+
+/* Form */
+.form-group {
+    margin-bottom: 25px;
+}
+
+.form-group label {
+    display: block;
+    color: #334155;
+    font-size: 18px;
+    font-weight: 600;
+    margin-bottom: 10px;
+}
+
+.form-group input {
+    width: 100%;
+    padding: 17px;
+    box-sizing: border-box;
+    background: #FFFFFF;
+    border: 1px solid #CBD5E1;
+    border-radius: 8px;
+    color: #1E293B;
+    font-family: inherit;
+    font-size: 18px;
+    outline: none;
+}
+
+.form-group input:focus {
+    border-color: #2563EB;
+    box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.10);
+}
+
+.form-group input::placeholder {
+    color: #94A3B8;
+}
+
+/* Login Button */
+.login-button {
+    width: 100%;
+    padding: 17px;
+    margin-top: 8px;
+    border: none;
+    border-radius: 8px;
+    background: #2563EB;
+    color: #FFFFFF;
+    font-family: inherit;
+    font-size: 20px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: 0.2s;
+}
+
+.login-button:hover {
+    background: #1D4ED8;
+}
+
+/* Error Message */
+.login-error {
+    padding: 10px;
+    margin-bottom: 20px;
+    background: #FEF2F2;
+    border: 1px solid #FECACA;
+    border-radius: 8px;
+    color: #DC2626;
+    font-size: 13px;
+    text-align: center;
+}
+
+/* Autofill */
+.login-card input:-webkit-autofill,
+.login-card input:-webkit-autofill:hover,
+.login-card input:-webkit-autofill:focus {
+    -webkit-text-fill-color: #1E293B;
+    -webkit-box-shadow: 0 0 0 1000px #FFFFFF inset;
+}
+
+/* ===== NAVBAR USER ===== */
+
+nav.navbar {
+    justify-content: space-between;
+}
+
+.navbar-user {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    color: white;
+    font-size: 13px;
+    white-space: nowrap;
+}
+
+.navbar-user .logout-link {
+    color: white;
+    text-decoration: none;
+    background-color: #5858f4;
+    padding: 8px 14px;
+    border-radius: 6px;
+    font-size: 16px;
+    transition: 0.2s;
+}
+
+.navbar-user .logout-link:hover {
+    background-color: #5c5cf8;
+}
+
+/* ===== ACTIVE NAVBAR ===== */
+
+nav.navbar .navbar-menu > a,
+.transaksi-dropdown > a {
+    padding: 10px 14px;
+    border-radius: 7px;
+}
+
+/* Efek saat diarahkan mouse */
+nav.navbar .navbar-menu > a:hover,
+.transaksi-dropdown > a:hover {
+    background-color: #38383f;
+}
+
+/* Highlight hanya untuk halaman aktif */
+nav.navbar .navbar-menu > a.active,
+.transaksi-dropdown > a.active,
+.transaksi-menu a.active {
+    background-color: #38383f;
+    border-radius: 7px;
+}
+
+
+/* ==========================
+   DASHBOARD
+========================== */
+
+.dashboard-container {
+    margin-top: 30px;
+    color: #1E293B;
+}
+
+/* Sapaan */
+.dashboard-welcome {
+    margin-bottom: 35px;
+}
+
+.dashboard-welcome h1 {
+    font-size: 30px;
+    color: #1E293B;
+    margin-bottom: 10px;
+}
+
+.dashboard-welcome p {
+    color: #64748B;
+    margin: 5px 0;
+}
+
+.dashboard-welcome span {
+    color: #2563EB;
+    font-weight: 600;
+}
+
+.welcome-description {
+    font-size: 14px;
+}
+
+/* Section */
+.dashboard-section {
+    margin-bottom: 35px;
+}
+
+.dashboard-section h2 {
+    font-size: 20px;
+    color: #1E293B;
+    margin-bottom: 18px;
+    
+}
+
+/* Statistik */
+.dashboard-stats {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 18px;
+}
+
+.stat-item {
+    background: #FFFFFF;
+    border: 1px solid #BFDBFE;
+    border-radius: 12px;
+    padding: 22px;
+    box-shadow: 0 3px 10px rgba(37, 99, 235, 0.06);
+    transition: 0.2s;
+}
+
+.stat-item:hover {
+    border-color: #60A5FA;
+    box-shadow: 0 4px 12px rgba(37, 99, 235, 0.10);
+}
+
+.stat-item h3 {
+    color: #2563EB;
+    font-size: 28px;
+    margin: 0 0 8px;
+}
+
+.stat-item p {
+    color: #64748B;
+    font-size: 14px;
+    margin: 0;
+}
+
+/* Shortcut tanpa card */
+.dashboard-shortcuts {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    column-gap: 35px;
+}
+
+.shortcut-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 15px;
+    padding: 18px 5px;
+    border-bottom: 1px solid #E2E8F0;
+}
+
+.shortcut-item h3 {
+    color: #1E293B;
+    font-size: 15px;
+    margin: 0 0 5px;
+}
+
+.shortcut-item p {
+    color: #64748B;
+    font-size: 12px;
+    margin: 0;
+}
+
+.shortcut-item a {
+    color: #2563EB;
+    text-decoration: none;
+    font-size: 12px;
+    font-weight: 600;
+    white-space: nowrap;
+}
+
+.shortcut-item a:hover {
+    color: #1D4ED8;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+    .dashboard-stats {
+        grid-template-columns: repeat(2, 1fr);
+    }
+
+    .dashboard-shortcuts {
+        grid-template-columns: 1fr;
+    }
+}
+
+
+/* Shortcut Dashboard */
+.dashboard-shortcuts {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    column-gap: 35px;
+}
+
+.shortcut-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 15px;
+    padding: 18px 12px;
+    border-bottom: 1px solid #E2E8F0;
+    border-radius: 6px;
+    transition: background-color 0.2s;
+}
+
+.shortcut-item:hover {
+    background-color: #F8FAFC;
+}
+
+.shortcut-item h3 {
+    color: #1E293B;
+    font-size: 15px;
+    margin: 0 0 5px;
+}
+
+.shortcut-item p {
+    color: #64748B;
+    font-size: 12px;
+    margin: 0;
+}
+
+.shortcut-item a {
+    color: #2563EB;
+    text-decoration: none;
+    font-size: 12px;
+    font-weight: 600;
+    white-space: nowrap;
+}
+
+.shortcut-item a:hover {
+    color: #1D4ED8;
+}
+
+/* Ringkasan Toko - Statistik Card */
+.dashboard-stats {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 18px;
+    margin-top: 15px;
+}
+
+.stat-item {
+    background-color: #FFFFFF;
+    border: 1px solid #DCE4EF;
+    border-radius: 12px;
+    padding: 24px 20px;
+    box-shadow: 0 3px 8px rgba(30, 64, 175, 0.06);
+}
+
+.stat-item h3 {
+    font-size: 30px;
+    font-weight: 700;
+    color: #2563EB;
+    margin: 0 0 8px;
+}
+
+.stat-item p {
+    font-size: 14px;
+    color: #64748B;
+    margin: 0;
+}
+
+@media (max-width: 768px) {
+    .dashboard-stats {
+        grid-template-columns: repeat(2, 1fr);
+    }
 }

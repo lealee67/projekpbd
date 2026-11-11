@@ -1,6 +1,7 @@
 <?php
 include "../../dbconnect.php";
 include "../../navbar.php";
+global $conn;
 
 $query = "SELECT * FROM viewrole";
 ?>
@@ -14,6 +15,9 @@ $query = "SELECT * FROM viewrole";
 
 <body>
     <h1>Data Role Toko Kocak Gaming</h1>
+    <a href="tambah_role.php" class="button">Tambah Role</a>
+    <br></br>
+
     <table>
         <tr>
             <?php
@@ -22,6 +26,7 @@ $query = "SELECT * FROM viewrole";
             foreach ($field as $kolom) {
                 echo "<th>" . $kolom->name . "</th>";
             }
+            echo "<th>Aksi</th>";
             ?>
         </tr>
 
@@ -32,6 +37,11 @@ $query = "SELECT * FROM viewrole";
             foreach ($data as $nilai) {
                 echo "<td>" . $nilai . "</td>";
             }
+            echo"<td>";
+            echo "<a href='edit_role.php?idrole=" . $data['ID'] . "' class='button'>Edit</a>";
+            echo "<a href='hapus_role.php?idrole=" . $data['ID'] . "' class='button'    
+                onclick=\"return confirm('Apakah Anda yakin ingin menghapus role ini?')\">Hapus</a>";
+            echo "</td>";
             echo "</tr>";
         }
         ?>

@@ -1,6 +1,7 @@
 <?php
 include "../../dbconnect.php";
 include "../../navbar.php";
+global $conn;
 
 $query = "SELECT * FROM viewpenerimaan";
 ?>

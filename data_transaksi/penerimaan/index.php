@@ -15,6 +15,8 @@ $query = "SELECT * FROM viewpenerimaan";
 
 <body>
     <h1>Data Penerimaan Toko Kocak Gaming</h1>
+    <a href="tambah_penerimaan.php" class="button">+ Tambah Penerimaan</a>
+    <br></br>
     <table>
         <tr>
             <?php
@@ -24,6 +26,7 @@ $query = "SELECT * FROM viewpenerimaan";
                 echo "<th>" . $kolom->name . "</th>";
             }
             ?>
+            <th>Aksi</th>
         </tr>
 
         <?php
@@ -33,7 +36,11 @@ $query = "SELECT * FROM viewpenerimaan";
             foreach ($data as $nilai) {
                 echo "<td>" . $nilai . "</td>";
             }
-            echo "</tr>";
+            echo "<td>
+                <a href='detail_penerimaan.php?id=" . (int) $data['ID'] ."'class='button'>Lihat Detail</a>
+            </td>
+            
+            </tr>";
         }
         ?>
     </table>

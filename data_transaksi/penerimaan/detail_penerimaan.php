@@ -1,8 +1,21 @@
 <?php
+require_once '../../auth.php';
+require_role([1, 2]);
 include "../../dbconnect.php";
 global $conn;
 
-$query = "SELECT * FROM viewdetail_penerimaan";
+$idpenerimaan = (int) ($_GET['id'] ?? 0);
+
+$query = mysqli_prepare($conn, "
+    SELECT *
+    FROM viewdetail_penerimaan
+    WHERE `ID PENERIMAAN` = ?
+");
+
+mysqli_stmt_bind_param($query, "i", $idpenerimaan);
+mysqli_stmt_execute($query);
+
+$result = mysqli_stmt_get_result($query);
 ?>
 
 <!DOCTYPE html>
@@ -13,11 +26,12 @@ $query = "SELECT * FROM viewdetail_penerimaan";
 </head> 
 
 <body>
+    <?php include "../../navbar.php"; ?>
     <h1>Detail Penerimaan Toko Kocak Gaming</h1>
     <table>
         <tr>
             <?php
-            $field = mysqli_fetch_fields(mysqli_query($conn, $query));
+            $field = mysqli_fetch_fields($result);
 
             foreach ($field as $kolom) {
                 echo "<th>" . $kolom->name . "</th>";
@@ -26,7 +40,6 @@ $query = "SELECT * FROM viewdetail_penerimaan";
         </tr>
 
         <?php
-        $result = mysqli_query($conn, $query);
         while ($data = mysqli_fetch_assoc($result)) {
             echo "<tr>";
             foreach ($data as $nilai) {

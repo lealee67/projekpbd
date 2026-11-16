@@ -18,14 +18,14 @@ function isActive($path) {
     }
 
     return strpos($currentPage, $path) !== false ? 'active' : '';
-}
+}  
 ?>
 
 <nav class="navbar">
 
     <div class="navbar-menu">
 
-        <!-- Dashboard: semua role -->
+        <!-- Dashboard semua role -->
         <a href="/projectpbd/index.php"
            class="<?php echo isActive('/index.php'); ?>">
             Dashboard
@@ -33,8 +33,8 @@ function isActive($path) {
 
         <?php if ($idrole == 1): ?>
 
-            <!-- MENU ADMIN -->
-            <a href="/projectpbd/data_master/barang/index.php"
+            <!-- MENU ADMIN-->            
+             <a href="/projectpbd/data_master/barang/index.php"
                class="<?php echo isActive('/data_master/barang/'); ?>">Barang</a>
 
             <a href="/projectpbd/data_master/satuan/index.php"
@@ -69,10 +69,10 @@ function isActive($path) {
 
                     <a href="/projectpbd/data_transaksi/retur/index.php"
                        class="<?php echo isActive('/data_transaksi/retur/'); ?>">Retur</a>
+                </div>
 
                     <a href="/projectpbd/data_transaksi/kartu_stok.php"
                        class="<?php echo isActive('/data_transaksi/kartu_stok.php'); ?>">Kartu Stok</a>
-                </div>
             </div>
 
         <?php elseif ($idrole == 2): ?>
@@ -95,15 +95,14 @@ function isActive($path) {
 
                     <a href="/projectpbd/data_transaksi/penerimaan/index.php"
                        class="<?php echo isActive('/data_transaksi/penerimaan/'); ?>">Penerimaan</a>
-
-                    <a href="/projectpbd/data_transaksi/kartu_stok.php"
-                       class="<?php echo isActive('/data_transaksi/kartu_stok.php'); ?>">Kartu Stok</a>
                 </div>
+                     a href="/projectpbd/data_transaksi/kartu_stok.php"
+                       class="<?php echo isActive('/data_transaksi/kartu_stok.php'); ?>">Kartu Stok</a>
             </div>
 
         <?php elseif ($idrole == 3): ?>
 
-            <!-- MENU KASIR -->
+            <!-- MENU KASIR --> 
             <a href="/projectpbd/data_master/barang/index.php"
                class="<?php echo isActive('/data_master/barang/'); ?>">Barang</a>
 

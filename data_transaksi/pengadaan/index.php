@@ -1,6 +1,7 @@
 <?php
 include "../../dbconnect.php";
 include "../../navbar.php";
+global $conn;
 
 $query = "SELECT * FROM viewpengadaan";
 ?>
@@ -14,6 +15,8 @@ $query = "SELECT * FROM viewpengadaan";
 
 <body>
     <h1>Data Pengadaan Toko Kocak Gaming</h1>
+    <a href="tambah_pengadaan.php" class="button">+ Tambah Pengadaan</a>
+    <br></br>
     <table>
         <tr>
             <?php
@@ -23,6 +26,7 @@ $query = "SELECT * FROM viewpengadaan";
                 echo "<th>" . $kolom->name . "</th>";
             }
             ?>
+            <th>Aksi</th>
         </tr>
 
         <?php
@@ -32,7 +36,11 @@ $query = "SELECT * FROM viewpengadaan";
             foreach ($data as $nilai) {
                 echo "<td>" . $nilai . "</td>";
             }
-            echo "</tr>";
+            echo "<td>
+                <a href='detail_pengadaan.php?id=" . (int) $data['ID'] ."'class='button'>Lihat Detail</a>
+            </td>
+
+            </tr>";
         }
         ?>
     </table>

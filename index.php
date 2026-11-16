@@ -24,7 +24,7 @@ function hitungData($conn, $tabel) {
     return (int) $data['total'];
 }
 
-// Statistik dan shortcut berdasarkan role
+// statistik  berdasarkan role
 if ($idrole == 1) {
 
     $judul = "Ringkasan Toko";
@@ -36,19 +36,6 @@ if ($idrole == 1) {
         ['label' => 'Total Penjualan', 'nilai' => hitungData($conn, 'penjualan')]
     ];
 
-    $shortcut = [
-        ['nama' => 'Data Barang', 'deskripsi' => 'Kelola informasi barang dan persediaan.', 'link' => 'data_master/barang/index.php'],
-        ['nama' => 'Data Satuan', 'deskripsi' => 'Kelola satuan barang.', 'link' => 'data_master/satuan/index.php'],
-        ['nama' => 'Data Role', 'deskripsi' => 'Kelola hak akses pengguna.', 'link' => 'data_master/role/index.php'],
-        ['nama' => 'Data User', 'deskripsi' => 'Kelola akun pengguna.', 'link' => 'data_master/user/index.php'],
-        ['nama' => 'Data Vendor', 'deskripsi' => 'Kelola informasi pemasok.', 'link' => 'data_master/vendor/index.php'],
-        ['nama' => 'Margin Penjualan', 'deskripsi' => 'Atur persentase margin penjualan.', 'link' => 'data_master/margin_penjualan/index.php'],
-        ['nama' => 'Penjualan', 'deskripsi' => 'Kelola transaksi penjualan.', 'link' => 'data_transaksi/penjualan/index.php'],
-        ['nama' => 'Pengadaan', 'deskripsi' => 'Kelola pengadaan barang.', 'link' => 'data_transaksi/pengadaan/index.php'],
-        ['nama' => 'Penerimaan', 'deskripsi' => 'Kelola penerimaan barang.', 'link' => 'data_transaksi/penerimaan/index.php'],
-        ['nama' => 'Retur', 'deskripsi' => 'Kelola transaksi retur.', 'link' => 'data_transaksi/retur/index.php'],
-        ['nama' => 'Kartu Stok', 'deskripsi' => 'Pantau riwayat pergerakan stok.', 'link' => 'data_transaksi/kartu_stok.php']
-    ];
 
 } elseif ($idrole == 2) {
 
@@ -61,13 +48,6 @@ if ($idrole == 1) {
         ['label' => 'Total Penerimaan', 'nilai' => hitungData($conn, 'penerimaan')]
     ];
 
-    $shortcut = [
-        ['nama' => 'Data Barang', 'deskripsi' => 'Lihat informasi barang dan persediaan.', 'link' => 'data_master/barang/index.php'],
-        ['nama' => 'Data Vendor', 'deskripsi' => 'Lihat informasi pemasok barang.', 'link' => 'data_master/vendor/index.php'],
-        ['nama' => 'Pengadaan', 'deskripsi' => 'Kelola pengadaan barang.', 'link' => 'data_transaksi/pengadaan/index.php'],
-        ['nama' => 'Penerimaan', 'deskripsi' => 'Kelola penerimaan barang.', 'link' => 'data_transaksi/penerimaan/index.php'],
-        ['nama' => 'Kartu Stok', 'deskripsi' => 'Pantau riwayat pergerakan stok.', 'link' => 'data_transaksi/kartu_stok.php']
-    ];
 
 } elseif ($idrole == 3) {
 
@@ -79,16 +59,97 @@ if ($idrole == 1) {
         ['label' => 'Total Retur', 'nilai' => hitungData($conn, 'retur')]
     ];
 
-    $shortcut = [
-        ['nama' => 'Data Barang', 'deskripsi' => 'Lihat informasi barang dan harga jual.', 'link' => 'data_master/barang/index.php'],
-        ['nama' => 'Penjualan', 'deskripsi' => 'Kelola transaksi penjualan.', 'link' => 'data_transaksi/penjualan/index.php'],
-        ['nama' => 'Retur', 'deskripsi' => 'Kelola transaksi retur.', 'link' => 'data_transaksi/retur/index.php']
-    ];
-
 } else {
     header("Location: login.php");
     exit();
 }
+
+// aktivitas terakhir
+$aktivitas = [];
+
+// admin dan staff gudang
+if ($idrole == 1 || $idrole == 2) {
+
+    // nampilin aktivitas pengadaan
+    $query = mysqli_query($conn, "
+        SELECT 'Pengadaan' AS jenis,
+               p.idpengadaan AS id,
+               p.timestamp AS waktu,
+               CONCAT('Pengadaan #', p.idpengadaan, ' - Vendor: ', v.nama_vendor) AS deskripsi
+        FROM pengadaan p
+        JOIN vendor v ON p.vendor_idvendor = v.idvendor
+        ORDER BY p.timestamp DESC
+        LIMIT 5
+    ");
+
+    if ($query) {
+        while ($data = mysqli_fetch_assoc($query)) {
+            $aktivitas[] = $data;
+        }
+    }
+
+    // nampilin aktivitas penerimaan
+    $query = mysqli_query($conn, "
+        SELECT 'Penerimaan' AS jenis,
+               p.idpenerimaan AS id,
+               p.created_at AS waktu,
+               CONCAT('Penerimaan #', p.idpenerimaan, ' - Barang diterima dari Pengadaan #', p.idpengadaan) AS deskripsi
+        FROM penerimaan p
+        ORDER BY p.created_at DESC
+        LIMIT 5
+    ");
+
+    if ($query) {
+        while ($data = mysqli_fetch_assoc($query)) {
+            $aktivitas[] = $data;
+        }
+    }
+}
+
+// admin dan kasir
+if ($idrole == 1 || $idrole == 3) {
+    // nampilin aktivitas penjualan
+    $query = mysqli_query($conn, "
+        SELECT 'Penjualan' AS jenis,
+               j.idpenjualan AS id,
+               j.created_at AS waktu,
+               CONCAT('Penjualan #', j.idpenjualan, ' - Total transaksi Rp ', j.total_nilai) AS deskripsi
+        FROM penjualan j
+        ORDER BY j.created_at DESC
+        LIMIT 5
+    ");
+
+    if ($query) {
+        while ($data = mysqli_fetch_assoc($query)) {
+            $aktivitas[] = $data;
+        }
+    }
+
+    // nampilin aktivitas retur
+    $query = mysqli_query($conn, "
+        SELECT 'Retur' AS jenis,
+               r.idretur AS id,
+               r.created_at AS waktu,
+               CONCAT('Retur #', r.idretur, ' - Dari Penerimaan #', r.idpenerimaan) AS deskripsi
+        FROM retur r
+        ORDER BY r.created_at DESC
+        LIMIT 5
+    ");
+
+    if ($query) {
+        while ($data = mysqli_fetch_assoc($query)) {
+            $aktivitas[] = $data;
+        }
+    }
+}
+
+// urut aktivitas dari yang terbaru
+usort($aktivitas, function ($a, $b) {
+    return strtotime($b['waktu']) - strtotime($a['waktu']);
+});
+
+// ngambil 5 aktivitas terbaru
+$aktivitas = array_slice($aktivitas, 0, 5);
 ?>
 
 <!DOCTYPE html>
@@ -123,27 +184,39 @@ if ($idrole == 1) {
         </div>
     </div>
 
-    <!-- Shortcut -->
-    <div class="dashboard-section">
-        <h2>Akses Menu</h2>
+    <!-- aktivitas terakhir -->
+     <div class="dashboard-section">
+        <h2>Aktivitas Terakhir</h2>
+        <div class="dashboard-activities">
+            <?php if(empty($aktivitas)): ?>
 
-        <div class="dashboard-shortcuts">
-            <?php foreach ($shortcut as $item): ?>
-                <div class="shortcut-item">
-                    <div>
-                        <h3><?= htmlspecialchars($item['nama']); ?></h3>
-                        <p><?= htmlspecialchars($item['deskripsi']); ?></p>
-                    </div>
+                <p class="activity-empty">
+                    Belum ada aktivitas transaksi
+                </p>
 
-                    <a href="<?= htmlspecialchars($item['link']); ?>">
-                        Buka Menu &rarr;
-                    </a>
-                </div>
-            <?php endforeach; ?>
-        </div>
+            <?php else: ?>
+                <?php foreach ($aktivitas as $item):?>
+                   <a href="detail_transaksi.php?jenis=<?= urlencode($item['jenis']); ?>&id=<?= (int) $item['id']; ?>"
+                    class="activity-item">
+
+            <div class="activity-type">
+                <?= htmlspecialchars($item['jenis']); ?>
+            </div>
+
+            <div class="activity-info">
+                <p><?= htmlspecialchars($item['deskripsi']); ?></p>
+            </div>
+
+            <time>
+                <?= date('d/m/Y H:i', strtotime($item['waktu'])); ?>
+            </time>
+        </a>
+
+     <?php endforeach; ?>
+
+    <?php endif; ?>
+
     </div>
-
 </div>
-
 </body>
 </html>

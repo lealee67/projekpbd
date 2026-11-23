@@ -1,7 +1,7 @@
 <?php
-session_start();
+require_once '../../auth.php';
+require_role([1]);
 include "../../dbconnect.php";
-include "../../navbar.php";
 global $conn;
 
 $iduser = $_SESSION['iduser'];
@@ -11,9 +11,8 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     $persen = $_POST['persen'];
     $status = $_POST['status'];
 
-    // Cek persentase duplikat
-    $cek = mysqli_prepare(
-        $conn,
+    // cek persentase duplikat
+    $cek = mysqli_prepare($conn,
         "SELECT idmargin_penjualan
          FROM margin_penjualan
          WHERE persen = ?"
@@ -32,11 +31,10 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         exit();
     }
 
-    // Cek apakah sudah ada margin aktif
+    // cek apakah sudah ada margin aktif
     if ($status == 1) {
 
-        $resultaktif = mysqli_query(
-            $conn,
+        $resultaktif = mysqli_query($conn,
             "SELECT idmargin_penjualan
              FROM margin_penjualan
              WHERE status = 1"
@@ -51,7 +49,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         }
     }
 
-    // INSERT margin
+    // insert margin
     $query = "INSERT INTO margin_penjualan
               (persen, status, iduser)
               VALUES (?, ?, ?)";
@@ -75,6 +73,8 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         echo "Gagal menambahkan margin penjualan: " . mysqli_error($conn);
     }
 }
+
+include "../../navbar.php";
 ?>
 
 <!DOCTYPE html>
@@ -85,21 +85,51 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 </head>
 
 <body>
-    <h1>Tambah Margin Penjualan Toko Kocak Gaming</h1>
 
-    <div class="form-container">
-        <form action="" method="POST">
+    <div class="pengadaan-container">
 
-            <label for="persen">Persentase Margin (%)</label>
-            <input type="number" id="persen" name="persen" required>
+        <h1>Tambah Margin Penjualan Toko Kocak Gaming</h1>
 
-            <label for="status">Status:</label>
-            <select id="jenis" name="status" required>
-                <option value="">Pilih Status</option>
-                <option value="1">Aktif</option>
-                <option value="0">Tidak Aktif</option>
-            </select>
-            <button type="submit">Tambah Margin Penjualan</button>
+        <form action="" method="POST" class="pengadaan-form">
+
+            <div class="barang-section">
+
+                <div class="form-field">
+                    <label for="persen">Persentase Margin (%)</label>
+                    <input
+                        type="number"
+                        id="persen"
+                        name="persen"
+                        step="0.01"
+                        min="0"
+                        placeholder="Masukkan persentase margin"
+                        required
+                    >
+                </div>
+
+                <div class="form-field">
+                    <label for="status">Status</label>
+                    <select id="status" name="status" required>
+                        <option value="">-- Pilih Status --</option>
+                        <option value="1">Aktif</option>
+                        <option value="0">Tidak Aktif</option>
+                    </select>
+                </div>
+
+            </div>
+
+            <div class="pengadaan-actions">
+
+                <a href="index.php" class="btn-batal">
+                    Batal
+                </a>
+
+                <button type="submit" class="btn-simpan">
+                    Tambah Margin Penjualan
+                </button>
+
+            </div>
+
         </form>
     </div>
 </body>

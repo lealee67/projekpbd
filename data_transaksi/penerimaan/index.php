@@ -33,9 +33,18 @@ $query = "SELECT * FROM viewpenerimaan";
         $result = mysqli_query($conn, $query);
         while ($data = mysqli_fetch_assoc($result)) {
             echo "<tr>";
-            foreach ($data as $nilai) {
-                echo "<td>" . $nilai . "</td>";
-            }
+            foreach ($data as $nama_kolom => $nilai) {
+
+                if ($nama_kolom == 'ID') {
+                    $nilai = 'Penerimaan #' . $nilai;
+                }
+
+                if ($nama_kolom == 'ID PENGADAAN') {
+                    $nilai = 'Pengadaan #' . $nilai;
+                }
+
+                    echo "<td>" . htmlspecialchars((string) $nilai) . "</td>";            
+                }
             echo "<td>
                 <a href='detail_penerimaan.php?id=" . (int) $data['ID'] ."'class='button'>Lihat Detail</a>
             </td>

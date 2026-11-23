@@ -5,7 +5,8 @@ include "../../dbconnect.php";
 global $conn;
 
 $idsatuan = $_GET['idsatuan'];
-$query = "DELETE FROM satuan
+$query = "UPDATE satuan
+          SET status = 0
           WHERE idsatuan = $idsatuan";
 $result = mysqli_query($conn, $query);
 if ($result) {

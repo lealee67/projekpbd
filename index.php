@@ -13,9 +13,14 @@ $username = $_SESSION['username'];
 $role = $_SESSION['nama_role'] ?? 'Pengguna';
 
 // Fungsi menghitung jumlah data
-function hitungData($conn, $tabel) {
-    $query = mysqli_query($conn, "SELECT COUNT(*) AS total FROM `$tabel`");
-
+function hitungData($conn, $tabel, $aktif = false) {
+    if($aktif){
+        $query = mysqli_query($conn, "SELECT COUNT(*) AS total FROM `$tabel` WHERE status = 1"
+    );
+    }else {
+        $query = mysqli_query($conn, "SELECT COUNT(*) AS total FROM `$tabel`"
+        );
+    }
     if (!$query) {
         return 0;
     }
@@ -30,8 +35,8 @@ if ($idrole == 1) {
     $judul = "Ringkasan Toko";
 
     $statistik = [
-        ['label' => 'Total Barang', 'nilai' => hitungData($conn, 'barang')],
-        ['label' => 'Total Vendor', 'nilai' => hitungData($conn, 'vendor')],
+        ['label' => 'Total Barang', 'nilai' => hitungData($conn, 'barang', true)],
+        ['label' => 'Total Vendor', 'nilai' => hitungData($conn, 'vendor', true)],
         ['label' => 'Total User', 'nilai' => hitungData($conn, 'user')],
         ['label' => 'Total Penjualan', 'nilai' => hitungData($conn, 'penjualan')]
     ];
@@ -42,8 +47,8 @@ if ($idrole == 1) {
     $judul = "Ringkasan Gudang";
 
     $statistik = [
-        ['label' => 'Total Barang', 'nilai' => hitungData($conn, 'barang')],
-        ['label' => 'Total Vendor', 'nilai' => hitungData($conn, 'vendor')],
+        ['label' => 'Total Barang', 'nilai' => hitungData($conn, 'barang', true)],
+        ['label' => 'Total Vendor', 'nilai' => hitungData($conn, 'vendor', true)],
         ['label' => 'Total Pengadaan', 'nilai' => hitungData($conn, 'pengadaan')],
         ['label' => 'Total Penerimaan', 'nilai' => hitungData($conn, 'penerimaan')]
     ];
@@ -54,7 +59,7 @@ if ($idrole == 1) {
     $judul = "Ringkasan Penjualan";
 
     $statistik = [
-        ['label' => 'Total Barang', 'nilai' => hitungData($conn, 'barang')],
+        ['label' => 'Total Barang', 'nilai' => hitungData($conn, 'barang', true)],
         ['label' => 'Total Penjualan', 'nilai' => hitungData($conn, 'penjualan')],
         ['label' => 'Total Retur', 'nilai' => hitungData($conn, 'retur')]
     ];

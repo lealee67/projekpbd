@@ -1,8 +1,17 @@
 <?php
+require_once '../../auth.php';
+require_role([1]);
 include "../../dbconnect.php";
-include "../../navbar.php";
 global $conn;
 
+// ambil data role
+$queryrole = "SELECT idrole, nama_role
+              FROM role
+              ORDER BY nama_role ASC";
+
+$resultrole = mysqli_query($conn, $queryrole);
+
+// tambah user
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
     $username = $_POST['username'];
@@ -14,7 +23,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
     $stmt = mysqli_prepare($conn, $query);
 
-    mysqli_stmt_bind_param($stmt, "ssi",$username, $password, $idrole);
+    mysqli_stmt_bind_param($stmt, "ssi", $username, $password, $idrole);
 
     $result = mysqli_stmt_execute($stmt);
 
@@ -25,6 +34,8 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         echo "Gagal menambahkan user: " . mysqli_error($conn);
     }
 }
+
+include "../../navbar.php";
 ?>
 
 <!DOCTYPE html>
@@ -35,37 +46,63 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 </head>
 
 <body>
-    <h1>Tambah User Toko Kocak Gaming</h1>
 
-    <div class="form-container">
-        <form action="" method="POST">
-        
-            <label for="nama">Username:</label>
-            <input type="text" id="username" name="username" required>
+    <div class="pengadaan-container">
 
-        <label for="password">Password:</label>
-            <input type="password" id="password" name="password" required>
+        <h1>Tambah User Toko Kocak Gaming</h1>
 
-        <label for="idrole">Role:</label>
-        <select id="idrole" name="idrole" required>
-            <option value="">Pilih Role</option>
+        <form action="" method="POST" class="pengadaan-form">
 
-            <?php
-            $queryrole = "SELECT idrole, nama_role 
-            FROM role
-            ORDER BY nama_role ASC";
+            <div class="barang-section">
 
-            $resultrole = mysqli_query($conn, $queryrole);
+                <div class="form-field">
+                    <label for="username">Username</label>
+                    <input
+                        type="text"
+                        id="username"
+                        name="username"
+                        placeholder="Masukkan username"
+                        required
+                    >
+                </div>
 
-            while ($role = mysqli_fetch_assoc($resultrole)) {
-                echo "<option value='" . $role['idrole'] . "'>" . $role['nama_role'] . "</option>";
-            }
-            ?> 
+                <div class="form-field">
+                    <label for="password">Password</label>
+                    <input
+                        type="password"
+                        id="password"
+                        name="password"
+                        placeholder="Masukkan password"
+                        required
+                    >
+                </div>
 
-        </select> 
+                <div class="form-field">
+                    <label for="idrole">Role</label>
+                    <select id="idrole" name="idrole" required>
+                        <option value="">-- Pilih Role --</option>
 
-        <button type="submit">Tambah User</button>
-    </form>
-</div>
+                        <?php
+                        while ($role = mysqli_fetch_assoc($resultrole)) {
+                            echo "<option value='" . $role['idrole'] . "'>"
+                                . htmlspecialchars($role['nama_role']) .
+                                "</option>";
+                        }
+                        ?>
+
+                    </select>
+                </div>
+
+            </div>
+
+            <div class="pengadaan-actions">
+                <a href="index.php" class="btn-batal">Batal</a>
+
+                <button type="submit" class="btn-simpan">
+                    Tambah User
+                </button>
+            </div>
+        </form>
+    </div>
 </body>
 </html>

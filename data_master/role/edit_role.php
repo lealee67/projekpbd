@@ -1,35 +1,52 @@
 <?php
+require_once '../../auth.php';
+require_role([1]);
 include "../../dbconnect.php";
-include "../../navbar.php";
 global $conn;
 
+// ambil ID role
+$idrole = (int) ($_GET['idrole'] ?? $_POST['idrole'] ?? 0);
+
+// ambil data role dari VIEW
+$query = "SELECT ID, ROLE
+          FROM viewrole
+          WHERE ID = $idrole";
+
+$result = mysqli_query($conn, $query);
+$data = mysqli_fetch_assoc($result);
+
+if (!$data) {
+    die("Data role tidak ditemukan!");
+}
+
+// nilai awal form
+$nama = $data['ROLE'];
+$pesan = "";
+
+// edit role
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
     $nama = $_POST['nama'];
-    $idrole = $_POST['idrole'];
 
-    $query = "UPDATE role
-              SET nama_role = '$nama'
-              WHERE idrole = '$idrole'";
+    $query_update = "UPDATE role
+                     SET nama_role = ?
+                     WHERE idrole = ?";
 
-    $result = mysqli_query($conn, $query);
+    $stmt = mysqli_prepare($conn, $query_update);
 
-    if ($result) {
+    mysqli_stmt_bind_param($stmt, "si", $nama, $idrole);
+
+    $result_update = mysqli_stmt_execute($stmt);
+
+    if ($result_update) {
         header("Location: index.php");
         exit();
     } else {
-        echo "Gagal mengubah role: " . mysqli_error($conn);
+        $pesan = "Gagal mengubah role: " . mysqli_stmt_error($stmt);
     }
-    } else {
-
-    $idrole = $_GET['idrole'];
-
-    $query = "SELECT * FROM viewrole
-              WHERE ID = '$idrole'";
-
-    $result = mysqli_query($conn, $query);
-    $data = mysqli_fetch_assoc($result);
 }
+
+include "../../navbar.php";
 ?>
 
 <!DOCTYPE html>
@@ -40,16 +57,53 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 </head>
 
 <body>
-    <h1>Edit Role</h1>
-    <div class="form-container">
-        <form action="" method="POST">
-            <input type="hidden" name="idrole" value="<?php echo $data['ID']; ?>">
 
-            <label for="nama">Role:</label>
-            <input type="text" id="nama" name="nama" value="<?php echo $data['ROLE']; ?>" required>
+    <div class="pengadaan-container">
 
-            <button type="submit">Simpan Perubahan</button>
+        <h1>Edit Role Toko Kocak Gaming</h1>
+
+        <form action="" method="POST" class="pengadaan-form">
+
+            <input type="hidden" name="idrole"
+                   value="<?php echo $idrole; ?>">
+
+            <div class="barang-section">
+
+                <div class="form-field">
+                    <label for="nama">Nama Role</label>
+                    <input
+                        type="text"
+                        id="nama"
+                        name="nama"
+                        value="<?php echo htmlspecialchars($nama); ?>"
+                        placeholder="Masukkan nama role"
+                        required
+                    >
+                </div>
+
+                <?php if ($pesan != "") { ?>
+                    <p style="color: red;">
+                        <?php echo htmlspecialchars($pesan); ?>
+                    </p>
+                <?php } ?>
+
+            </div>
+
+            <div class="pengadaan-actions">
+
+                <a href="index.php" class="btn-batal">
+                    Batal
+                </a>
+
+                <button type="submit" class="btn-simpan">
+                    Simpan Perubahan
+                </button>
+
+            </div>
+
         </form>
+
     </div>
+
 </body>
 </html>

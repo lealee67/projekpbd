@@ -37,10 +37,12 @@ if ($idpengadaan > 0) {
 
         // Mengambil barang dan jumlah yang sudah diterima
         $query_detail = mysqli_query($conn, "
-            SELECT
-                dp.idbarang,
-                b.nama,
-                SUM(dp.jumlah) AS jumlah_pesan,
+            SELECT dp.idbarang,
+            b.nama,
+            SUM(dp.jumlah) AS jumlah_pesan,
+            ROUND(
+                SUM(dp.jumlah * dp.harga_satuan) / SUM(dp.jumlah)
+            ) AS harga_modal,
                 COALESCE(terima.jumlah_diterima, 0) AS jumlah_diterima,
                 SUM(dp.jumlah) - COALESCE(terima.jumlah_diterima, 0) AS sisa
             FROM detail_pengadaan dp
@@ -285,10 +287,8 @@ if (isset($_POST['simpan'])) {
                         </td>
 
                         <td>
-                            <input type="number"
-                                   name="harga_satuan_terima[]"
-                                   min="1"
-                                   placeholder="Harga aktual">
+                            <input type="number"name="harga_satuan_terima[]"min="1"
+                            value="<?= (int) $item['harga_modal']; ?>"placeholder="Harga aktual">
                         </td>
                     </tr>
 

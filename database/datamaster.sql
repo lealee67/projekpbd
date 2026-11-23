@@ -56,18 +56,67 @@ AS SELECT * FROM user;
 CREATE VIEW viewmargin_penjualan
 AS SELECT * FROM margin_penjualan;
 
--- perbaiki view data master
-CREATE OR REPLACE VIEW viewsatuanbarang 
+-- view aktif
+CREATE OR REPLACE VIEW viewsatuanbarang_aktif
+AS SELECT idsatuan AS ID, nama_satuan AS SATUAN,
+	 CASE 
+		WHEN status = 0 THEN 'Tidak Aktif'
+        ELSE 'Aktif'
+	 END AS STATUS
+FROM satuan
+WHERE status = 1;
+
+CREATE OR REPLACE VIEW viewvendor_aktif
+AS SELECT idvendor AS ID, nama_vendor AS VENDOR,
+	 CASE badan_hukum
+		WHEN 'P' THEN 'PT'
+        WHEN 'C' THEN 'CV'
+     END AS 'BADAN HUKUM',
+     CASE status
+		WHEN 0 THEN 'Tidak Aktif'
+        ELSE 'Aktif'
+	 END AS STATUS
+FROM vendor
+WHERE status = 1;
+
+
+CREATE OR REPLACE VIEW viewbarang_aktif
+AS SELECT b.idbarang AS ID,
+	 CASE b.jenis
+		WHEN 'A' THEN 'Aksesoris'
+        WHEN 'B' THEN 'Boardgame'
+        WHEN 'C' THEN 'Card'
+        WHEN 'G' THEN 'Game'
+	 END AS Kategori, 
+     b.nama AS NAMA, 
+     b.harga AS HARGA, 
+     s.nama_satuan AS SATUAN,
+	 CASE b.status
+		WHEN 0 THEN 'Tidak Aktif'
+        ELSE 'Aktif'
+	 END AS STATUS
+FROM barang b, satuan s 
+WHERE b.idsatuan = s.idsatuan AND b.status = 1;
+
+CREATE OR REPLACE VIEW viewmargin_penjualan_aktif
+AS SELECT mp.idmargin_penjualan AS ID, mp.created_at AS 'TANGGAL DIBUAT', mp.persen AS 'PERSENTASE (%)', 
+CASE mp.status
+		WHEN 0 THEN 'Tidak Aktif'
+        ELSE 'Aktif'
+	 END AS STATUS, 
+     mp.updated_at AS 'TERAKHIR DIUBAH',
+     u.username AS USER
+FROM margin_penjualan mp, user u
+WHERE mp.iduser = u.iduser AND mp.status = 1;
+
+-- view semua
+CREATE OR REPLACE VIEW viewsatuanbarang
 AS SELECT idsatuan AS ID, nama_satuan AS SATUAN,
 	 CASE 
 		WHEN status = 0 THEN 'Tidak Aktif'
         ELSE 'Aktif'
 	 END AS STATUS
 FROM satuan;
-
-CREATE OR REPLACE VIEW viewrole
-AS SELECT idrole AS ID, nama_role AS ROLE
-FROM role;
 
 CREATE OR REPLACE VIEW viewvendor
 AS SELECT idvendor AS ID, nama_vendor AS VENDOR,
@@ -104,8 +153,12 @@ AS SELECT u.iduser AS ID, u.username AS USERNAME, r.nama_role AS ROLE
 FROM user u, role r
 WHERE u.idrole = r.idrole;
 
+CREATE OR REPLACE VIEW viewrole
+AS SELECT idrole AS ID, nama_role AS ROLE
+FROM role;
+
 CREATE OR REPLACE VIEW viewmargin_penjualan
-AS SELECT mp.idmargin_penjualan AS ID, mp.created_at AS 'TANGGAL DIBUAT', mp.persen AS PERSENTASE, 
+AS SELECT mp.idmargin_penjualan AS ID, mp.created_at AS 'TANGGAL DIBUAT', mp.persen AS 'PERSENTASE (%)', 
 CASE mp.status
 		WHEN 0 THEN 'Tidak Aktif'
         ELSE 'Aktif'

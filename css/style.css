@@ -407,53 +407,7 @@ nav.navbar .navbar-menu > a.active,
   }
 }
 
-/* shortcut dashboard */
-.dashboard-shortcuts {
-  display: grid;
-  grid-template-columns: repeat(2, 1fr);
-  column-gap: 35px;
-}
-
-.shortcut-item {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  gap: 15px;
-  padding: 18px 12px;
-  border-bottom: 1px solid #e2e8f0;
-  border-radius: 6px;
-  transition: background-color 0.2s;
-}
-
-.shortcut-item:hover {
-  background-color: #f8fafc;
-}
-
-.shortcut-item h3 {
-  color: #1e293b;
-  font-size: 15px;
-  margin: 0 0 5px;
-}
-
-.shortcut-item p {
-  color: #64748b;
-  font-size: 12px;
-  margin: 0;
-}
-
-.shortcut-item a {
-  color: #2563eb;
-  text-decoration: none;
-  font-size: 12px;
-  font-weight: 600;
-  white-space: nowrap;
-}
-
-.shortcut-item a:hover {
-  color: #1d4ed8;
-}
-
-/* ringkasan toko  (statistik card) */
+/* ringkasan toko (statistik card) */
 .dashboard-stats {
   display: grid;
   grid-template-columns: repeat(4, 1fr);
@@ -463,21 +417,31 @@ nav.navbar .navbar-menu > a.active,
 
 .stat-item {
   background-color: #ffffff;
-  border: 1px solid #dce4ef;
+  border: 1px solid #dce5f2;
   border-radius: 12px;
-  padding: 24px 20px;
-  box-shadow: 0 3px 8px rgba(30, 64, 175, 0.06);
+  padding: 28px 22px;
+
+  /* shadow */
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.12);
+
+  /* Efek hover */
+  transition: all 0.3s ease;
+}
+
+.stat-item:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
 }
 
 .stat-item h3 {
-  font-size: 30px;
+  font-size: 32px;
   font-weight: 700;
   color: #2563eb;
   margin: 0 0 8px;
 }
 
 .stat-item p {
-  font-size: 14px;
+  font-size: 15px;
   color: #64748b;
   margin: 0;
 }
@@ -512,7 +476,7 @@ nav.navbar .navbar-menu > a.active,
   background-color: #2563eb;
   color: white;
   border-radius: 6px;
-  font-size: 12px;
+  font-size: 14px;
   font-weight: 600;
   flex-shrink: 0;
 }
@@ -528,13 +492,13 @@ nav.navbar .navbar-menu > a.active,
 }
 
 .activity-info p {
-  font-size: 12px;
+  font-size: 16px;
   color: #64748b;
   margin: 0;
 }
 
 .activity-item time {
-  font-size: 12px;
+  font-size: 16px;
   color: #64748b;
   white-space: nowrap;
 }
@@ -650,7 +614,7 @@ nav.navbar .navbar-menu > a.active,
   width: 100%;
 }
 
-/* Jumlah dan harga di bawah dropdown */
+/* jumlah dan harga di bawah dropdown */
 .barang-detail {
   display: grid;
   grid-template-columns: 1fr 2fr auto;
@@ -758,4 +722,143 @@ nav.navbar .navbar-menu > a.active,
 .penerimaan-detail-form .penerimaan-table {
     width: 100%;
     table-layout: auto;
+}
+
+/* form tambah penjualan */
+
+.penjualan-container {
+    background: #f0ebf8;
+    min-height: calc(100vh - 60px);
+    padding: 35px 5%;
+    box-sizing: border-box;
+}
+
+/* judul */
+.penjualan-container > h1 {
+    text-align: center;
+    margin: 0 auto 30px;
+    padding: 0;
+    background: transparent;
+    border: none;
+    max-width: none;
+}
+
+/* form */
+.penjualan-form {
+    width: 100%;
+    max-width: 1100px;
+    margin: auto;
+    padding: 0;
+    background: transparent;
+    border: none;
+    box-shadow: none;
+    box-sizing: border-box;
+}
+
+/* informasi dan daftar barang */
+.penjualan-section {
+    width: 100%;
+    box-sizing: border-box;
+    background: white;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    padding: 25px 30px;
+    margin-bottom: 15px;
+}
+
+.penjualan-section h3 {
+    margin-top: 0;
+    margin-bottom: 22px;
+}
+
+/* input */
+.penjualan-form .form-field {
+    display: flex;
+    flex-direction: column;
+    gap: 9px;
+    margin-bottom: 18px;
+}
+
+.penjualan-form .form-field label {
+    font-weight: 600;
+}
+
+.penjualan-form .form-field input,
+.penjualan-form .form-field select {
+    width: 100%;
+    box-sizing: border-box;
+    padding: 12px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    background: white;
+}
+
+.penjualan-form .form-field input:focus,
+.penjualan-form .form-field select:focus {
+    outline: none;
+    border-color: #4285f4;
+}
+
+/* card setiap barang */
+.penjualan-form .barang-row {
+    width: 100%;
+    box-sizing: border-box;
+    padding: 22px;
+    margin-bottom: 15px;
+    background: white;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+}
+
+/* dropdown barang selebar card */
+.penjualan-form .barang-row > .form-field {
+    width: 100%;
+}
+
+/* tombol */
+.penjualan-actions {
+    display: flex;
+    justify-content: flex-end;
+    align-items: center;
+    gap: 12px;
+}
+
+button[name="simpan"] {
+    background-color: #2563eb;
+    color: white;
+    border: none;
+    cursor: pointer;
+}
+
+button[name="simpan"]:hover {
+    background-color: #1d4ed8;
+}
+
+/* Tabel Detail Retur */
+.pengadaan-section table {
+    width: 100%;
+    table-layout: auto;
+}
+
+.pengadaan-section th,
+.pengadaan-section td {
+    padding: 12px;
+}
+
+.status-selesai {
+    background-color: #dcfce7;
+    color: #166534;
+    padding: 7px 14px;
+    border-radius: 20px;
+    font-size: 14px;
+    font-weight: 600;
+}
+
+.status-diproses {
+    background-color: #fef3c7;
+    color: #92400e;
+    padding: 7px 14px;
+    border-radius: 20px;
+    font-size: 14px;
+    font-weight: 600;
 }

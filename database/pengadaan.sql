@@ -6,7 +6,7 @@ SELECT p.idpengadaan AS ID,
           WHEN 'S' THEN 'Selesai'
           END AS STATUS,
           p.subtotal_nilai AS SUBTOTAL,
-          p.ppn AS PPN,
+          p.ppn AS 'PPN (%)',
           p.total_nilai AS TOTAL,
           v.nama_vendor AS VENDOR,
           u.username AS OLEH

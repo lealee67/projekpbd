@@ -3,7 +3,17 @@ include "../../dbconnect.php";
 include "../../navbar.php";
 global $conn;
 
-$query = "SELECT * FROM viewmargin_penjualan";
+$status = $_GET['status'] ?? 'Aktif';
+
+if ($status == 'Aktif') {
+    $query = "SELECT * FROM viewmargin_penjualan_aktif";
+} else {
+    $query = "SELECT * FROM viewmargin_penjualan";
+}
+
+$query .= " ORDER BY ID ASC";
+
+$result = mysqli_query($conn, $query);
 ?>
 
 <!DOCTYPE html>
@@ -15,9 +25,29 @@ $query = "SELECT * FROM viewmargin_penjualan";
 
 <body>
     <h1>Data Margin Penjualan Toko Kocak Gaming</h1>
-    <a href="tambah_margin_penjualan.php" class="button">Tambah Margin Penjualan</a>
+    <a href="tambah_margin_penjualan.php" class="button">+ Tambah Margin Penjualan</a>
     <br></br>
 
+    <!-- filter status -->
+    <form method="GET" style="margin: 15px 0;">
+
+        <label>Filter Status:</label>
+
+        <select name="status" onchange="this.form.submit()">
+
+            <option value="Semua"
+                <?= $status == 'Semua' ? 'selected' : ''; ?>>
+                Semua Status
+            </option>
+
+            <option value="Aktif"
+                <?= $status == 'Aktif' ? 'selected' : ''; ?>>
+                Aktif
+            </option>
+        </select>
+
+    </form>
+    
     <table>
         <tr>
             <?php

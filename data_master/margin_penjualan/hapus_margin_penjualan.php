@@ -1,9 +1,12 @@
 <?php
 include "../../dbconnect.php";
+require_once '../../auth.php';
+require_role([1]);
 global $conn;
 
 $idmargin_penjualan = $_GET['idmargin_penjualan'];
-$query = "DELETE FROM margin_penjualan
+$query = "UPDATE margin_penjualan
+          SET status = 0
           WHERE idmargin_penjualan = ?";
 
 $stmt = mysqli_prepare($conn, $query);

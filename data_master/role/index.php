@@ -15,7 +15,7 @@ $query = "SELECT * FROM viewrole";
 
 <body>
     <h1>Data Role Toko Kocak Gaming</h1>
-    <a href="tambah_role.php" class="button">Tambah Role</a>
+    <a href="tambah_role.php" class="button">+ Tambah Role</a>
     <br></br>
 
     <table>

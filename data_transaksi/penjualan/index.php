@@ -1,8 +1,10 @@
 <?php
 include "../../dbconnect.php";
 include "../../navbar.php";
+global $conn;
 
-$query = "SELECT * FROM viewpenjualan";
+$query = "SELECT * FROM viewpenjualan ORDER BY ID DESC";
+$result = mysqli_query($conn, $query);
 ?>
 
 <!DOCTYPE html>
@@ -10,31 +12,54 @@ $query = "SELECT * FROM viewpenjualan";
 <head>
     <title>Data Penjualan</title>
     <link rel="stylesheet" href="../../css/style.css">
-</head> 
+</head>
 
 <body>
+
     <h1>Data Penjualan Toko Kocak Gaming</h1>
+
+    <a href="tambah_penjualan.php" class="button"> + Tambah Penjualan</a>
+    <br><br>
+
     <table>
         <tr>
             <?php
-            $field = mysqli_fetch_fields(mysqli_query($conn, $query));
+            $field = mysqli_fetch_fields($result);
 
             foreach ($field as $kolom) {
-                echo "<th>" . $kolom->name . "</th>";
+                echo "<th>" . htmlspecialchars($kolom->name) . "</th>";
             }
             ?>
+            <th>Aksi</th>
         </tr>
 
         <?php
-        $result = mysqli_query($conn, $query);
         while ($data = mysqli_fetch_assoc($result)) {
+
             echo "<tr>";
-            foreach ($data as $nilai) {
-                echo "<td>" . $nilai . "</td>";
+
+            foreach ($data as $kolom=> $nilai) {
+            
+                if ($kolom == 'ID') {
+                    $nilai = 'Penjualan #' . $nilai;
+                }
+
+                if ($kolom == 'SUBTOTAL' || $kolom == 'TOTAL') {
+                    $nilai = 'Rp' . number_format($nilai, 0, ',', '.');
+                }
+
+                echo "<td>" . htmlspecialchars((string) $nilai) . "</td>";
             }
+
+            echo "<td>
+                <a href='detail_penjualan.php?id=" . (int) $data['ID'] . "' class='button'>Lihat Detail</a>
+            </td>";
+
             echo "</tr>";
         }
         ?>
+
     </table>
+
 </body>
 </html>

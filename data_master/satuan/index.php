@@ -3,9 +3,17 @@ include "../../dbconnect.php";
 include "../../navbar.php";
 global $conn;
 
-$query = "SELECT * FROM viewsatuanbarang
-          WHERE STATUS = 'Aktif'
-          ORDER BY ID";
+$status = $_GET['status'] ?? 'Aktif';
+
+if ($status == 'Aktif') {
+    $query = "SELECT * FROM viewsatuanbarang_aktif";
+} else {
+    $query = "SELECT * FROM viewsatuanbarang";
+}
+
+$query .= " ORDER BY ID ASC";
+
+$result = mysqli_query($conn, $query);
 ?>
 
 <!DOCTYPE html>
@@ -18,8 +26,28 @@ $query = "SELECT * FROM viewsatuanbarang
 <body>
     <h1>Data Satuan Toko Kocak Gaming</h1>
     <a href="tambah_satuan.php"
-    class="button">Tambah Satuan</a>
+    class="button">+ Tambah Satuan</a>
     <br></br>
+
+    <!-- filter status -->
+    <form method="GET" style="margin: 15px 0;">
+
+        <label>Filter Status:</label>
+
+        <select name="status" onchange="this.form.submit()">
+
+            <option value="Semua"
+                <?= $status == 'Semua' ? 'selected' : ''; ?>>
+                Semua Status
+            </option>
+
+            <option value="Aktif"
+                <?= $status == 'Aktif' ? 'selected' : ''; ?>>
+                Aktif
+            </option>
+        </select>
+
+    </form>
 
     <table>
         <tr>

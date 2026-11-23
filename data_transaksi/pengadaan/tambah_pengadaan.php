@@ -1,51 +1,49 @@
+
 <?php
 require_once '../../auth.php';
 require_role([1, 2]);
 include "../../dbconnect.php";
-include "../../navbar.php";
 global $conn;
 
-// ambil data vendor
+// Ambil data vendor
 $query_vendor = mysqli_query($conn, "
     SELECT idvendor, nama_vendor
     FROM vendor
 ");
 
-// ambil data barang aktif
+$vendor_list = mysqli_fetch_all($query_vendor, MYSQLI_ASSOC);
+
+// Ambil data barang aktif beserta harga modal
 $query_barang = mysqli_query($conn, "
     SELECT idbarang, nama, harga
     FROM barang
     WHERE status = 1
 ");
 
-$vendor_list = mysqli_fetch_all($query_vendor, MYSQLI_ASSOC);
 $barang_list = mysqli_fetch_all($query_barang, MYSQLI_ASSOC);
 
-if(isset($_POST['simpan'])){
+if (isset($_POST['simpan'])) {
+
     $idvendor = (int) $_POST['idvendor'];
     $barang = $_POST['barang'] ?? [];
     $jumlah = $_POST['jumlah'] ?? [];
-    $harga_satuan = $_POST['harga_satuan'] ?? [];
 
     try {
         mysqli_report(MYSQLI_REPORT_ERROR | MYSQLI_REPORT_STRICT);
 
-        // validasi vendor dan barang
         if ($idvendor <= 0 || count($barang) == 0) {
             throw new Exception("Vendor dan barang wajib diisi.");
         }
 
-        if (
-            count($barang) != count($jumlah) ||
-            count($barang) != count($harga_satuan)
-        ) {
+        if (count($barang) != count($jumlah)) {
             throw new Exception("Data barang tidak lengkap.");
         }
 
         mysqli_begin_transaction($conn);
 
-        // simpan header pengadaan
+        // Simpan header pengadaan
         $iduser = (int) $_SESSION['iduser'];
+
         $query = mysqli_prepare($conn, "
             INSERT INTO pengadaan
             (status, subtotal_nilai, ppn, total_nilai, user_iduser, vendor_idvendor)
@@ -55,46 +53,47 @@ if(isset($_POST['simpan'])){
         mysqli_stmt_bind_param($query, "ii", $iduser, $idvendor);
         mysqli_stmt_execute($query);
 
-        // ambil ID pengadaan yang baru dibuat
+        // Ambil ID pengadaan
         $idpengadaan = mysqli_insert_id($conn);
 
-        // query detail pengadaan
+        // Query untuk mengambil harga modal barang aktif
+        $ambil_harga = mysqli_prepare($conn, "
+            SELECT harga
+            FROM barang
+            WHERE idbarang = ? AND status = 1
+        ");
+
+        // Query simpan detail pengadaan
         $query_detail = mysqli_prepare($conn, "
             INSERT INTO detail_pengadaan
             (harga_satuan, jumlah, sub_total, idbarang, idpengadaan)
             VALUES (?, ?, 0, ?, ?)
         ");
 
-        // cek barang aktif
-        $cek_barang = mysqli_prepare($conn, "
-            SELECT idbarang
-            FROM barang
-            WHERE idbarang = ? AND status = 1
-        ");
-
-        // simpan setiap barang
+        // Simpan setiap barang
         for ($i = 0; $i < count($barang); $i++) {
 
             $idbarang = (int) $barang[$i];
             $jml = (int) $jumlah[$i];
-            $harga = (int) $harga_satuan[$i];
 
-            if ($idbarang <= 0 || $jml <= 0 || $harga <= 0) {
-                throw new Exception("Data barang, jumlah, dan harga harus diisi dengan benar.");
+            if ($idbarang <= 0 || $jml <= 0) {
+                throw new Exception("Barang dan jumlah harus diisi dengan benar.");
             }
 
-            // memastikan barang masih aktif
-            mysqli_stmt_bind_param($cek_barang, "i", $idbarang);
-            mysqli_stmt_execute($cek_barang);
-            mysqli_stmt_store_result($cek_barang);
+            // Ambil harga modal dari tabel barang
+            mysqli_stmt_bind_param($ambil_harga, "i", $idbarang);
+            mysqli_stmt_execute($ambil_harga);
 
-            if (mysqli_stmt_num_rows($cek_barang) == 0) {
+            $hasil_harga = mysqli_stmt_get_result($ambil_harga);
+            $data_harga = mysqli_fetch_assoc($hasil_harga);
+
+            if (!$data_harga) {
                 throw new Exception("Barang tidak ditemukan atau sudah tidak aktif.");
             }
 
-            mysqli_stmt_free_result($cek_barang);
+            $harga = (int) $data_harga['harga'];
 
-            // input detail barang
+            // Simpan detail barang
             mysqli_stmt_bind_param(
                 $query_detail,
                 "iiii",
@@ -107,7 +106,7 @@ if(isset($_POST['simpan'])){
             mysqli_stmt_execute($query_detail);
         }
 
-        // subtotal, ppn, dan total menggunakan stored procedure
+        // Hitung subtotal, PPN, dan total
         $query_sp = mysqli_prepare($conn, "CALL sp_pengadaan(?)");
 
         mysqli_stmt_bind_param($query_sp, "i", $idpengadaan);
@@ -115,7 +114,6 @@ if(isset($_POST['simpan'])){
 
         mysqli_commit($conn);
 
-        // Kembali ke halaman daftar pengadaan
         header("Location: index.php");
         exit();
 
@@ -126,8 +124,9 @@ if(isset($_POST['simpan'])){
         $pesan_error = "Gagal menyimpan pengadaan: " . $e->getMessage();
     }
 }
-?>
 
+include "../../navbar.php";
+?>
 
 <!DOCTYPE html>
 <html>
@@ -141,10 +140,15 @@ if(isset($_POST['simpan'])){
 <div class="pengadaan-container">
 
     <h1>Tambah Pengadaan Barang</h1>
+    <?php if (isset($pesan_error)): ?>
+        <p class="pesan-error">
+            <?= htmlspecialchars($pesan_error); ?>
+        </p>
+    <?php endif; ?>
 
     <form method="POST" class="pengadaan-form">
 
-        <!-- Informasi Vendor -->
+        <!-- Informasi Pengadaan -->
         <div class="pengadaan-section">
             <h3>Informasi Pengadaan</h3>
 
@@ -159,8 +163,10 @@ if(isset($_POST['simpan'])){
                             <?= htmlspecialchars($vendor['nama_vendor']); ?>
                         </option>
                     <?php endforeach; ?>
+
                 </select>
             </div>
+
         </div>
 
         <!-- Daftar Barang -->
@@ -194,41 +200,43 @@ if(isset($_POST['simpan'])){
 
 </div>
 
-<!-- template input barang -->
+<!-- Template Barang -->
 <template id="template-barang">
 
-     <div class="barang-row">
+    <div class="barang-section">
 
         <div class="form-field">
             <label>Barang</label>
-            <select name="barang[]" required>
+
+            <select name="barang[]" class="pilih-barang" required>
                 <option value="">-- Pilih Barang --</option>
 
                 <?php foreach ($barang_list as $barang): ?>
-                    <option value="<?= $barang['idbarang']; ?>">
+                    <option
+                        value="<?= $barang['idbarang']; ?>"
+                        data-harga="<?= $barang['harga']; ?>">
                         <?= htmlspecialchars($barang['nama']); ?>
                     </option>
                 <?php endforeach; ?>
-            </select>
-             <br></br>
 
+            </select>
         </div>
+
         <div class="form-field">
             <label>Jumlah</label>
             <input type="number" name="jumlah[]" min="1" required>
         </div>
-        <br></br>
 
         <div class="form-field">
-            <label>Harga Satuan</label>
-            <input type="number" name="harga_satuan[]" min="1" required>
+            <label>Harga Satuan (Modal)</label>
+            <input type="number" name="harga_satuan[]" class="harga-satuan" disabled>
         </div>
-        <br></br>
 
         <button type="button" class="btn-hapus-barang"
                 onclick="this.parentElement.remove()">
             Hapus
         </button>
+        <br></br>
 
     </div>
 
@@ -242,7 +250,22 @@ if(isset($_POST['simpan'])){
         document.getElementById('daftar-barang').appendChild(isi);
     }
 
-    // Menampilkan satu input barang saat halaman dibuka
+    // isi harga otomatis saat barang dipilih
+    document.getElementById('daftar-barang').addEventListener('change', function(e) {
+
+        if (e.target.classList.contains('pilih-barang')) {
+
+            let pilihan = e.target.options[e.target.selectedIndex];
+            let harga = pilihan.getAttribute('data-harga');
+
+            let baris = e.target.closest('.barang-section');
+            let inputHarga = baris.querySelector('.harga-satuan');
+
+            inputHarga.value = harga || '';
+        }
+    });
+
+    // tampilkan baris barang saat halaman dibuka
     tambahBarang();
 </script>
 

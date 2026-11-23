@@ -4,7 +4,8 @@ require_role([1, 2]);
 include "../../dbconnect.php";
 
 $idvendor = $_GET['idvendor'];
-$query = "DELETE FROM vendor
+$query = "UPDATE vendor
+          SET status = 0
           WHERE idvendor = $idvendor";
 $result = mysqli_query($conn, $query);
 if ($result) {

@@ -1,17 +1,53 @@
-
 <?php
+require_once '../../auth.php'; 
 include "../../dbconnect.php";
-include "../../navbar.php";
 global $conn;
 
+// ambil ID user
+$iduser = (int) ($_GET['iduser'] ?? $_POST['iduser'] ?? 0);
+
+// ambil data user lama
+$query = "SELECT ID, USERNAME, ROLE
+          FROM viewuser
+          WHERE ID = $iduser";
+
+$result = mysqli_query($conn, $query);
+$data = mysqli_fetch_assoc($result);
+
+if (!$data) {
+    die("Data user tidak ditemukan!");
+}
+
+// ambil idrole berdasarkan nama role dari VIEW
+$query_role = "SELECT idrole
+               FROM role
+               WHERE nama_role = ?";
+
+$stmt_role = mysqli_prepare($conn, $query_role);
+mysqli_stmt_bind_param($stmt_role, "s", $data['ROLE']);
+mysqli_stmt_execute($stmt_role);
+
+$result_role = mysqli_stmt_get_result($stmt_role);
+$data_role = mysqli_fetch_assoc($result_role);
+
+if (!$data_role) {
+    die("Role user tidak ditemukan!");
+}
+
+// nilai awal form
+$username = $data['USERNAME'];
+$selectedRole = $data_role['idrole'];
+$pesan = "";
+
+// edit user
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
-    $iduser = $_POST['iduser'];
     $username = $_POST['username'];
     $password = $_POST['password'];
     $idrole = $_POST['idrole'];
+    $selectedRole = $idrole;
 
-    // Cek apakah username sudah digunakan user lain
+    // cek username sudah digunakan user lain
     $querycek = "SELECT iduser FROM user
                  WHERE username = ? AND iduser != ?";
 
@@ -21,55 +57,68 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     $resultcek = mysqli_stmt_get_result($stmtcek);
 
     if (mysqli_num_rows($resultcek) > 0) {
-        echo "Username sudah digunakan user lain!";
+
+        $pesan = "Username sudah digunakan user lain!";
+
     } else {
 
         if ($password != "") {
             $password = password_hash($password, PASSWORD_DEFAULT);
 
-            $query = "UPDATE user
-                      SET username = ?,
-                          password = ?,
-                          idrole = ?
-                      WHERE iduser = ?";
+            $query_update = "UPDATE user
+                             SET username = ?,
+                                 password = ?,
+                                 idrole = ?
+                             WHERE iduser = ?";
 
-            $stmt = mysqli_prepare($conn, $query);
-            mysqli_stmt_bind_param($stmt, "ssii", $username, $password, $idrole, $iduser);
+            $stmt = mysqli_prepare($conn, $query_update);
+
+            mysqli_stmt_bind_param(
+                $stmt,
+                "ssii",
+                $username,
+                $password,
+                $idrole,
+                $iduser
+            );
 
         } else {
 
-            $query = "UPDATE user
-                      SET username = ?,
-                          idrole = ?
-                      WHERE iduser = ?";
+            $query_update = "UPDATE user
+                             SET username = ?,
+                                 idrole = ?
+                             WHERE iduser = ?";
 
-            $stmt = mysqli_prepare($conn, $query);
-            mysqli_stmt_bind_param($stmt, "sii", $username, $idrole, $iduser);
+            $stmt = mysqli_prepare($conn, $query_update);
+
+            mysqli_stmt_bind_param(
+                $stmt,
+                "sii",
+                $username,
+                $idrole,
+                $iduser
+            );
         }
 
-        $result = mysqli_stmt_execute($stmt);
+        $result_update = mysqli_stmt_execute($stmt);
 
-        if ($result) {
+        if ($result_update) {
             header("Location: index.php");
             exit();
         } else {
-            echo "Gagal mengubah user: " . mysqli_stmt_error($stmt);
+            $pesan = "Gagal mengubah user: " . mysqli_stmt_error($stmt);
         }
     }
-
-} else {
-
-    $iduser = $_GET['iduser'];
-
-    $query = "SELECT iduser, username, idrole
-              FROM user
-              WHERE iduser = '$iduser'";
-
-    $result = mysqli_query($conn, $query);
-    $data = mysqli_fetch_assoc($result);
-
-    $idrole = $data['idrole'];
 }
+
+// ambil data role
+$queryrole = "SELECT idrole, nama_role
+              FROM role
+              ORDER BY nama_role ASC";
+
+$resultrole = mysqli_query($conn, $queryrole);
+
+include "../../navbar.php";
 ?>
 
 <!DOCTYPE html>
@@ -80,43 +129,82 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 </head>
 
 <body>
-    <h1>Edit User Toko Kocak Gaming</h1>
 
-    <div class="form-container">
-        <form action="" method="POST">
+    <div class="pengadaan-container">
+
+        <h1>Edit User Toko Kocak Gaming</h1>
+
+        <form action="" method="POST" class="pengadaan-form">
 
             <input type="hidden" name="iduser"
-                   value="<?php echo $data['iduser']; ?>">
+                   value="<?php echo $iduser; ?>">
 
-            <label for="username">Username:</label>
-            <input type="text" id="username" name="username"
-                   value="<?php echo $data['username']; ?>" required>
+            <div class="barang-section">
 
-            <label for="password">Password Baru:</label>
-            <input type="password" id="password" name="password"
-                   placeholder="Kosongkan jika tidak ingin mengganti">
+                <div class="form-field">
+                    <label for="username">Username</label>
+                    <input
+                        type="text"
+                        id="username"
+                        name="username"
+                        value="<?php echo htmlspecialchars($username); ?>"
+                        placeholder="Masukkan username"
+                        required
+                    >
+                </div>
 
-            <label for="idrole">Role:</label>
-            <select id="idrole" name="idrole" required>
-                <option value="">Pilih Role</option>
+                <div class="form-field">
+                    <label for="password">Password Baru</label>
+                    <input
+                        type="password"
+                        id="password"
+                        name="password"
+                        placeholder="Kosongkan jika tidak ingin mengganti"
+                    >
+                </div>
 
-                <?php
-                $queryrole = "SELECT idrole, nama_role
-                              FROM role
-                              ORDER BY nama_role ASC";
+                <div class="form-field">
+                    <label for="idrole">Role</label>
+                    <select id="idrole" name="idrole" required>
 
-                $resultrole = mysqli_query($conn, $queryrole);
+                        <option value="">-- Pilih Role --</option>
 
-                while ($role = mysqli_fetch_assoc($resultrole)) {
-                    $selected = ($role['idrole'] == $data['idrole']) ? 'selected' : '';
+                        <?php
+                        while ($role = mysqli_fetch_assoc($resultrole)) {
 
-                    echo "<option value='" . $role['idrole'] . "' $selected>"
-                         . $role['nama_role'] . "</option>";
-                }
-                ?>
-            </select>
+                            $selected = ($role['idrole'] == $selectedRole)
+                                ? 'selected'
+                                : '';
 
-            <button type="submit">Simpan Perubahan</button>
+                            echo "<option value='" . $role['idrole'] . "' $selected>"
+                                . htmlspecialchars($role['nama_role']) .
+                                "</option>";
+                        }
+                        ?>
+
+                    </select>
+                </div>
+
+                <?php if ($pesan != "") { ?>
+                    <p style="color: red;">
+                        <?php echo htmlspecialchars($pesan); ?>
+                    </p>
+                <?php } ?>
+
+            </div>
+
+            <div class="pengadaan-actions">
+
+                <a href="index.php" class="btn-batal">
+                    Batal
+                </a>
+
+                <button type="submit" class="btn-simpan">
+                    Simpan Perubahan
+                </button>
+
+            </div>
+
         </form>
     </div>
 </body>

@@ -2,38 +2,47 @@
 require_once '../../auth.php';
 require_role([1]);
 include "../../dbconnect.php";
-include "../../navbar.php";
 global $conn;
 
+// ambil ID satuan dari URL atau POST
+$idsatuan = (int) ($_GET['idsatuan'] ?? $_POST['idsatuan'] ?? 0);
+
+// ambil data satuan lama
+$query = "SELECT * FROM viewsatuanbarang WHERE ID = $idsatuan";
+$result = mysqli_query($conn, $query);
+$data = mysqli_fetch_assoc($result);
+
+// update satuan
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
     $nama_satuan = $_POST['nama_satuan'];
-    $idsatuan = $_POST['idsatuan'];
     $status = $_POST['status'];
 
-    $query = "UPDATE satuan
-              SET nama_satuan = '$nama_satuan', 
-                  status = '$status'
-              WHERE idsatuan = '$idsatuan'";
+    $query_update = "UPDATE satuan
+                     SET nama_satuan = ?, status = ?
+                     WHERE idsatuan = ?";
 
-    $result = mysqli_query($conn, $query);
+    $stmt = mysqli_prepare($conn, $query_update);
 
-    if ($result) {
+    mysqli_stmt_bind_param(
+        $stmt,
+        "sii",
+        $nama_satuan,
+        $status,
+        $idsatuan
+    );
+
+    $result_update = mysqli_stmt_execute($stmt);
+
+    if ($result_update) {
         header("Location: index.php");
         exit();
     } else {
         echo "Gagal mengubah satuan: " . mysqli_error($conn);
     }
-    } else {
-
-    $idsatuan = $_GET['idsatuan'];
-
-    $query = "SELECT * FROM viewsatuanbarang
-              WHERE ID = '$idsatuan'";
-
-    $result = mysqli_query($conn, $query);
-    $data = mysqli_fetch_assoc($result);
 }
+
+include "../../navbar.php";
 ?>
 
 <!DOCTYPE html>
@@ -44,21 +53,54 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 </head>
 
 <body>
-    <h1>Edit Satuan</h1>
-    <div class="form-container">
-        <form action="" method="POST">
-            <input type="hidden" name="idsatuan" value="<?php echo $data['ID']; ?>">
 
-            <label for="nama">Satuan:</label>
-            <input type="text" id="nama_satuan" name="nama_satuan" value="<?php echo $data['SATUAN']; ?>" required>
+    <div class="pengadaan-container">
 
-            <label for="status">Status:</label>
-            <select id="status" name="status" required>
-                <option value="1" <?php if ($data['STATUS'] == "Aktif") echo 'selected'; ?>>Aktif</option>
-                <option value="0"<?php if ($data['STATUS'] == "Tidak Aktif") echo 'selected'; ?>>Tidak Aktif</option>
-            </select>
+        <h1>Edit Satuan Barang Toko Kocak Gaming</h1>
 
-            <button type="submit">Simpan Perubahan</button>
+        <form action="" method="POST" class="pengadaan-form">
+
+            <input type="hidden" name="idsatuan"
+                   value="<?php echo $data['ID']; ?>">
+
+            <div class="barang-section">
+
+                <div class="form-field">
+                    <label for="nama_satuan">Nama Satuan</label>
+                    <input
+                        type="text"
+                        id="nama_satuan"
+                        name="nama_satuan"
+                        value="<?php echo htmlspecialchars($data['SATUAN']); ?>"
+                        placeholder="Masukkan nama satuan"
+                        required
+                    >
+                </div>
+
+                <div class="form-field">
+                    <label for="status">Status</label>
+                    <select id="status" name="status" required>
+                        <option value="1"
+                            <?php if ($data['STATUS'] == "Aktif") echo 'selected'; ?>>
+                            Aktif
+                        </option>
+
+                        <option value="0"
+                            <?php if ($data['STATUS'] == "Tidak Aktif") echo 'selected'; ?>>
+                            Tidak Aktif
+                        </option>
+                    </select>
+                </div>
+
+            </div>
+
+            <div class="pengadaan-actions">
+                <a href="index.php" class="btn-batal">Batal</a>
+
+                <button type="submit" class="btn-simpan">
+                    Simpan Perubahan
+                </button>
+            </div>
         </form>
     </div>
 </body>

@@ -17,7 +17,7 @@ $query = "SELECT * FROM viewuser
 
 <body>
     <h1>Data User Toko Kocak Gaming</h1>
-    <a href="tambah_user.php" class="button">Tambah User</a>
+    <a href="tambah_user.php" class="button">+ Tambah User</a>
     <br></br>
 
     <table>

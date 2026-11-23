@@ -2,40 +2,64 @@
 require_once '../../auth.php';
 require_role([1, 2]);
 include "../../dbconnect.php";
-include "../../navbar.php";
 global $conn;
 
+// ambil ID vendor
+$idvendor = (int) ($_GET['idvendor'] ?? $_POST['idvendor'] ?? 0);
+
+// ambil data vendor dari VIEW
+$query = "SELECT ID, VENDOR, `BADAN HUKUM`, STATUS
+          FROM viewvendor
+          WHERE ID = $idvendor";
+
+$result = mysqli_query($conn, $query);
+$data = mysqli_fetch_assoc($result);
+
+if (!$data) {
+    die("Data vendor tidak ditemukan!");
+}
+
+// nilai awal form
+$nama_vendor = $data['VENDOR'];
+$badan_hukum = ($data['BADAN HUKUM'] == "PT") ? "P" : "C";
+$status = ($data['STATUS'] == "Aktif") ? 1 : 0;
+$pesan = "";
+
+// proses edit vendor
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
     $nama_vendor = $_POST['nama_vendor'];
-    $idvendor = $_POST['idvendor'];
     $badan_hukum = $_POST['badan_hukum'];
     $status = $_POST['status'];
 
-    $query = "UPDATE vendor
-              SET nama_vendor = '$nama_vendor', 
-                  badan_hukum = '$badan_hukum',
-                  status = '$status'
-              WHERE idvendor = '$idvendor'";
+    $query_update = "UPDATE vendor
+                     SET nama_vendor = ?,
+                         badan_hukum = ?,
+                         status = ?
+                     WHERE idvendor = ?";
 
-    $result = mysqli_query($conn, $query);
+    $stmt = mysqli_prepare($conn, $query_update);
 
-    if ($result) {
+    mysqli_stmt_bind_param(
+        $stmt,
+        "ssii",
+        $nama_vendor,
+        $badan_hukum,
+        $status,
+        $idvendor
+    );
+
+    $result_update = mysqli_stmt_execute($stmt);
+
+    if ($result_update) {
         header("Location: index.php");
         exit();
     } else {
-        echo "Gagal mengubah vendor: " . mysqli_error($conn);
+        $pesan = "Gagal mengubah vendor: " . mysqli_stmt_error($stmt);
     }
-    } else {
+}
 
-    $idvendor = $_GET['idvendor'];
-
-    $query = "SELECT * FROM viewvendor 
-              WHERE ID = '$idvendor'";
-
-    $result = mysqli_query($conn, $query);
-    $data = mysqli_fetch_assoc($result);
-    }
+include "../../navbar.php";
 ?>
 
 <!DOCTYPE html>
@@ -46,29 +70,86 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 </head>
 
 <body>
-    <h1>Edit Vendor</h1>
-    <div class="form-container">
-      <form action="" method="POST">
-        <input type="hidden" name="idvendor" value="<?php echo $data['ID']; ?>">
 
-        <label for="nama">Nama Vendor:</label>
-        <input type="text" id="nama_vendor" name="nama_vendor" value="<?php echo $data['VENDOR']; ?>" required>
+    <div class="pengadaan-container">
 
+        <h1>Edit Vendor Toko Kocak Gaming</h1>
 
-        <label for="badan_hukum">Badan Hukum:</label>
-       <select id="badan_hukum" name="badan_hukum" required>
-       <option value="P" <?php if ($data['BADAN HUKUM'] == "PT") echo 'selected'; ?>>  Perseroan Terbatas (PT)</option> 
-       <option value="C" <?php if ($data['BADAN HUKUM'] == "CV") echo 'selected'; ?>> Commanditaire Vennootschap (CV)</option>
-    </select>
-       
-    <label for="status">Status:</label>
-            <select id="status" name="status" required>
-                <option value="1" <?php if ($data['STATUS'] == "Aktif") echo 'selected'; ?>>Aktif</option>
-                <option value="0"<?php if ($data['STATUS'] == "Tidak Aktif") echo 'selected'; ?>>Tidak Aktif</option>
-            </select>
+        <form action="" method="POST" class="pengadaan-form">
 
-        <button type="submit">Simpan Perubahan</button>
-     </form>
+            <input type="hidden" name="idvendor"
+                   value="<?php echo $idvendor; ?>">
+
+            <div class="barang-section">
+
+                <div class="form-field">
+                    <label for="nama_vendor">Nama Vendor</label>
+                    <input
+                        type="text"
+                        id="nama_vendor"
+                        name="nama_vendor"
+                        value="<?php echo htmlspecialchars($nama_vendor); ?>"
+                        placeholder="Masukkan nama vendor"
+                        required
+                    >
+                </div>
+
+                <div class="form-field">
+                    <label for="badan_hukum">Badan Hukum</label>
+                    <select id="badan_hukum" name="badan_hukum" required>
+
+                        <option value="P"
+                            <?php if ($badan_hukum == "P") echo 'selected'; ?>>
+                            Perseroan Terbatas (PT)
+                        </option>
+
+                        <option value="C"
+                            <?php if ($badan_hukum == "C") echo 'selected'; ?>>
+                            Commanditaire Vennootschap (CV)
+                        </option>
+
+                    </select>
+                </div>
+
+                <div class="form-field">
+                    <label for="status">Status</label>
+                    <select id="status" name="status" required>
+
+                        <option value="1"
+                            <?php if ($status == 1) echo 'selected'; ?>>
+                            Aktif
+                        </option>
+
+                        <option value="0"
+                            <?php if ($status == 0) echo 'selected'; ?>>
+                            Tidak Aktif
+                        </option>
+
+                    </select>
+                </div>
+
+                <?php if ($pesan != "") { ?>
+                    <p style="color: red;">
+                        <?php echo htmlspecialchars($pesan); ?>
+                    </p>
+                <?php } ?>
+
+            </div>
+
+            <div class="pengadaan-actions">
+
+                <a href="index.php" class="btn-batal">
+                    Batal
+                </a>
+
+                <button type="submit" class="btn-simpan">
+                    Simpan Perubahan
+                </button>
+
+            </div>
+
+        </form>
+
     </div>
 </body>
 </html>

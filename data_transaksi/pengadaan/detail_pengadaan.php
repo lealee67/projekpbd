@@ -29,7 +29,8 @@ $result = mysqli_stmt_get_result($query);
     <?php include "../../navbar.php"; ?>
 
     <h1>Detail Pengadaan Toko Kocak Gaming</h1>
-    <a href="index.php">Kembali</a>
+    
+    <h3>Pengadaan #<?= $idpengadaan; ?></h3>
 
     <table>
         <tr>
@@ -61,6 +62,9 @@ $result = mysqli_stmt_get_result($query);
             </tr>
         <?php endif; ?>
     </table>
+    <br>
+
+    <a href="index.php" class="btn-batal">Kembali</a>
 
 </body>
 </html>

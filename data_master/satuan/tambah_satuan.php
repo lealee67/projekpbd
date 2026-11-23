@@ -2,7 +2,6 @@
 require_once '../../auth.php';
 require_role([1]);
 include "../../dbconnect.php";
-include "../../navbar.php";
 global $conn;
 
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
@@ -26,6 +25,8 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         echo "Gagal menambahkan satuan: " . mysqli_error($conn);
     }
 }
+
+include "../../navbar.php";
 ?>
 
 <!DOCTYPE html>
@@ -36,21 +37,47 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 </head>
 
 <body>
-    <h1>Tambah Satuan Barang Toko Kocak Gaming</h1>
-    <div class="form-container">
-    <form action=" " method="POST">
-        <label for="nama">Nama Satuan:</label>
-        <input type="text" id="nama" name="nama" required>
 
-        <label for="status">Status:</label>
-            <select id="status" name="status" required>
-                <option value="">Pilih Status</option>
-                <option value="1">Aktif</option>
-                <option value="0">Tidak Aktif</option>
-            </select>
+    <div class="pengadaan-container">
 
-        <button type="submit">Tambah Satuan</button>
-    </form>
-</div>
+        <h1>Tambah Satuan Barang Toko Kocak Gaming</h1>
+
+        <form action="" method="POST" class="pengadaan-form">
+
+            <div class="barang-section">
+
+                <div class="form-field">
+                    <label for="nama">Nama Satuan</label>
+                    <input
+                        type="text"
+                        id="nama"
+                        name="nama"
+                        placeholder="Masukkan nama satuan"
+                        required
+                    >
+                </div>
+
+                <div class="form-field">
+                    <label for="status">Status</label>
+                    <select id="status" name="status" required>
+                        <option value="">-- Pilih Status --</option>
+                        <option value="1">Aktif</option>
+                        <option value="0">Tidak Aktif</option>
+                    </select>
+                </div>
+
+            </div>
+
+            <div class="pengadaan-actions">
+                <a href="index.php" class="btn-batal">Batal</a>
+                <button type="submit" class="btn-simpan">
+                    Tambah Satuan
+                </button>
+            </div>
+
+        </form>
+
+    </div>
+
 </body>
 </html>
